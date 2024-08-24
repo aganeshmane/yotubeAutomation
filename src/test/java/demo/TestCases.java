@@ -85,7 +85,8 @@ public class TestCases extends ExcelDataProvider { // Lets us read the data
                                 By.xpath("//yt-formatted-string[normalize-space()='Movies']")));
                 Wrappers.clickOnElement(driver, Movies);
 
-                WebElement rightArrow = driver.findElement(By.xpath("(//*[@id='right-arrow']/ytd-button-renderer/yt-button-shape/button)[1]"));
+                WebElement rightArrow = driver.findElement(By.xpath(
+                                "(//*[@id='right-arrow']/ytd-button-renderer/yt-button-shape/button)[1]/yt-touch-feedback-shape/div/div[2]"));
 
                 while (Wrappers.checkButtonVisible(rightArrow)) {
                         Wrappers.clickOnElement(driver, rightArrow);
