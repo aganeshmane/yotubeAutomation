@@ -14,16 +14,17 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
+import org.testng.Assert;
+import org.testng.Reporter;
 
 import java.time.Duration;
 import java.util.logging.Level;
 
 import demo.utils.ExcelDataProvider;
-// import io.github.bonigarcia.wdm.WebDriverManager;
+//import io.github.bonigarcia.wdm.WebDriverManager;
 import demo.wrappers.Wrappers;
 
-public class TestCases extends ExcelDataProvider{ // Lets us read the data
+public class TestCases extends ExcelDataProvider { // Lets us read the data
         ChromeDriver driver;
 
         /*
@@ -36,6 +37,7 @@ public class TestCases extends ExcelDataProvider{ // Lets us read the data
          * Do not change the provided methods unless necessary, they will help in
          * automation and assessment
          */
+
         @BeforeTest
         public void startBrowser() {
                 System.setProperty("java.util.logging.config.file", "logging.properties");
@@ -54,13 +56,45 @@ public class TestCases extends ExcelDataProvider{ // Lets us read the data
                 System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "build/chromedriver.log");
 
                 driver = new ChromeDriver(options);
+                driver.get("https://www.youtube.com/");
 
                 driver.manage().window().maximize();
         }
 
+        @Test(enabled = false)
+        public void testCase01() {
+                Reporter.log("Start Test case: testCase01");
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+                String expectedURL = "https://www.youtube.com/";
+                String actualURL = driver.getCurrentUrl();
+                Assert.assertEquals(actualURL, expectedURL, "Invalid URL");
+                WebElement abouElement = driver.findElement(By.xpath("//a[normalize-space()='About']"));
+                Wrappers.clickOnElement(driver, abouElement);
+                wait.until(ExpectedConditions.urlContains("about"));
+                String message = driver.findElement(By.cssSelector("section:nth-child(1) > p:nth-child(2)")).getText();
+                Assert.assertEquals(message, "Our mission is to give everyone a voice and show them the world.",
+                                "Actual message and Expected message not same");
+                Reporter.log("end Test case: testCase01");
+        }
+
+        @Test
+        public void testCase02() throws InterruptedException {
+                Reporter.log("Start Test case: testCase02");
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+                WebElement Movies = wait.until(ExpectedConditions.presenceOfElementLocated(
+                                By.xpath("//yt-formatted-string[normalize-space()='Movies']")));
+                Wrappers.clickOnElement(driver, Movies);
+
+                WebElement rightArrow = driver.findElement(By.xpath("(//*[@id='right-arrow']/ytd-button-renderer/yt-button-shape/button)[1]"));
+
+                while (Wrappers.checkButtonVisible(rightArrow)) {
+                        Wrappers.clickOnElement(driver, rightArrow);
+                }
+        }
+
         @AfterTest
         public void endTest() {
-                driver.close();
+                // driver.close();
                 driver.quit();
 
         }
